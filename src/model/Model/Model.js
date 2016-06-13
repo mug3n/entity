@@ -9,7 +9,7 @@ export class Model {
 		Object.assign(this, data);
 		this.composed = false;
 		this.compose();
-		this.constructor.depot.deposit(this);
+		this.constructor.depot.set(this);
 	}
 
 	static get define () {
@@ -25,17 +25,17 @@ export class Model {
 
 		promise = new Promise(
 			function (resolve) {
-				if (this.depot.withdraw(id)) {
+				if (this.depot.get(id)) {
 					setTimeout(
 						function () {
-							resolve(this.depot.withdraw(id));
+							resolve(this.depot.get(id));
 						}.bind(this)
 					)
 				} else {
 					// here goes api call
 					setTimeout(
 						function () {
-							resolve(this.depot.withdraw(id));
+							resolve(this.depot.get(id));
 						}.bind(this)
 					)
 				}
@@ -44,26 +44,18 @@ export class Model {
 
 		return promise;
 	}
-	
-	static findAll() {
-		var promise, stack;
+
+	static findAll () {
+		var promise;
 
 		promise = new Promise(
 			function (resolve) {
-				if (this.depot.withdraw()) {
-					setTimeout(
-						function () {
-							resolve(new Stack(this.depot.withdraw()));
-						}.bind(this)
-					)
-				} else {
-					// here goes api call
-					setTimeout(
-						function () {
-							resolve(new Stack(this.depot.withdraw()));
-						}.bind(this)
-					)
-				}
+				// here goes api call
+				setTimeout(
+					function () {
+						resolve(new Stack(this.depot.get()));
+					}.bind(this)
+				)
 			}.bind(this)
 		);
 
