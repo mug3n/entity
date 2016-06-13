@@ -7,7 +7,7 @@ Some es6 features will be missing for now, as they are not handled by babel yet.
 
 - git clone
 - npm install
-- build
+- build 
     - I have used browserify/watchify. It's pretty much the fastest way to get it running. Install browserify/watchify,
     then run browserify/watchify -v true #source file# -t babelify --outfile #destination file#
     https://babeljs.io/docs/setup/#installation
