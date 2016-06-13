@@ -27,4 +27,4 @@ any kind of instructions are pointless for now.
 
 ## License
 
-MIT License, see [License](LICENSE.md).
+MIT License, see [License](LICENSE).
