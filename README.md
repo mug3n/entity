@@ -25,10 +25,6 @@ any kind of instructions are pointless for now.
 4. Push to the branch: `git push origin my-new-feature`
 5. Submit a pull request :D
 
-## Credits
-
-TODO: Write credits
-
 ## License
 
 MIT License, see [License](license.md).
