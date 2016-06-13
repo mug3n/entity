@@ -1,7 +1,7 @@
 # entity.js
 
 An es6 library for handling models on client-side. I'm writing this as an exercise, in order to learn about es6, so feel free to contribute! :)
-Some es6 features will be missing for now, as they are not handled by babel yet. That forced me (with my current knowledge) to make a couple of ugly workarounds. I will try to fix them along the way.
+Some es6 features are missing for now, as they are not handled by babel yet. That forced me (with my current knowledge) to make a couple of ugly workarounds. I will try to fix them along the way.
 
 ## Installation
 
