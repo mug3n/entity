@@ -3,28 +3,26 @@
  */
 self.addEventListener('message', function (message) {
 	self.postMessage(
-		self.process[message.data.process](message.data.payload)
+		self.process[message.data.process](message.data.payload, message.data.id)
 	);
 }, false);
 
 self.process = {
-	defragment: function (array) {
-		var clone;
-
-		clone = [];
-
-		array.forEach(
-			function (element, index) {
-				if (element) {
-					clone.push(index);
-				}
-			}
-		);
-
+	defragment: function (array, id) {
 		return {
+			id: id,
 			process: 'defragment',
 			type: 'response',
-			payload: clone
+			payload: array.reduce(
+				function (previousValue, currentValue, currentIndex) {
+					if (currentValue !== null) {
+						previousValue[previousValue.length] = currentIndex;
+					}
+
+					return previousValue;
+				},
+				[]
+			)
 		}
 	}
 };

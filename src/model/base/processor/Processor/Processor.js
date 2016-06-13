@@ -2,36 +2,16 @@
  * Created by mugen on 6/13/16.
  */
 
-import {Stack} from '../../../Stack/Stack';
-import {Extended} from '../../../extended/Extended/Extended';
-import {ExtendedLevel2} from '../../../extended/ExtendedLevel2/ExtendedLevel2';
-
-function extendedFactory () {
-	return new ExtendedLevel2(
-		{
-			id: parseInt(Math.random() * 100000000),
-			a: Math.random() < .5,
-			b: Math.random().toString(36).substring(7),
-			attachment: new Extended(
-				{
-					id: parseInt(Math.random() * 100000000)
-				}
-			)
-		}
-	)
-}
+import {Stream} from '../../../../entity/stream/Stream/Stream';
 
 class processor {
-
-	get [Symbol.toStringTag] () {
-		return this.constructor.name;
-	}
-
 	constructor () {
 		this.worker = new Worker('src/model/base/processor/Worker/Worker.js');
 
+		this.processes = [];
+
 		this.worker.addEventListener('message', function (e) {
-			console.log('Worker said: ', this.defragment(e.data.payload, true));
+			console.log('Worker said: ', this.defragment(e.data, true));
 		}.bind(this), false);
 	}
 
@@ -39,34 +19,37 @@ class processor {
 		this.defragment();
 	}
 
-	defragment (data, response) {
+	defragment (stack) {
+		var stream;
 
-		if (response) {
-			return data.map(
-				function (element) {
-					return this.stack[element];
-				}.bind(this)
-			)
-		}
+		stream = new Stream().pipe(
+			function (defragmentedStack) {
+				
+				this.processes.splice(
+					this.processes.indexOf(stream),
+					1
+				);
 
-		this.stack = new Stack(
-			extendedFactory(),
-			null,
-			null,
-			extendedFactory(),
-			null,
-			extendedFactory(),
-			extendedFactory(),
-			null,
-			extendedFactory()
+				return defragmentedStack.map(
+					function (index) {
+						return stack[index];
+					}.bind(this)
+				);
+			}.bind(this)
 		);
+
+		this.processes.push(stream);
+
 		this.worker.postMessage(
 			{
+				id: this.processes.length - 1,
 				process: 'defragment',
 				type: 'request',
-				payload: Array.from(this.stack)
+				payload: Array.from(stack)
 			}
-		); // Send data to our worker.
+		);
+
+		return stream;
 	}
 }
 

@@ -11,7 +11,7 @@ export class Stack {
 		}
 
 		Object.assign(this, array);
-		this.length = array.length;
+		this.length = array && array.length || 0;
 	}
 
 	add () {
@@ -19,14 +19,18 @@ export class Stack {
 	}
 
 	remove (identifier) {
+		var index;
+
 		identifier = typeof identifier === 'object' ? identifier.id : identifier;
 
-		this.constructor.splice.call(
+		index = this.constructor.findIndex.call(
 			this,
-			this.constructor.findIndex(
-				item => item.id === identifier
-			)
-		)
+			function (item) {
+				return item && item.id === identifier;
+			}
+		);
+
+		this[index] = null;
 	}
 
 	get (id) {
@@ -45,84 +49,103 @@ export class Stack {
 		)
 	}
 
-	every() {
+	every () {
 		return Array.prototype.every.apply(this, arguments);
 	}
-	filter() {
+
+	filter () {
 		return Array.prototype.filter.apply(this, arguments);
 	}
-	find() {
+
+	find () {
 		return Array.prototype.find.apply(this, arguments);
 	}
-	forEach() {
+
+	forEach () {
 		return Array.prototype.forEach.apply(this, arguments);
 	}
 
-	static from() {
+	static from () {
 		return Array.from.apply(this, arguments);
 	}
-	static concat() {
+
+	static concat () {
 		return Array.concat.apply(this, arguments);
 	}
-	static entries() {
+
+	static entries () {
 		return Array.entries.apply(this, arguments);
 	}
 
-	static findIndex() {
+	static findIndex () {
 		return Array.prototype.findIndex.apply(this, arguments);
 	}
 
-	some() {
+	some () {
 		return Array.prototype.some.apply(this, arguments);
 	}
 
-	sort() {
+	sort () {
 		return Array.prototype.sort.apply(this, arguments);
 	}
 
-	static includes() {
+	static includes () {
 		return Array.prototype.includes.apply(this, arguments);
 	}
-	static indexOf() {
+
+	static indexOf () {
 		return Array.prototype.indexOf.apply(this, arguments);
 	}
-	static join() {
+
+	static join () {
 		return Array.prototype.join.apply(this, arguments);
 	}
-	static keys() {
+
+	static keys () {
 		return Array.prototype.keys.apply(this, arguments);
 	}
-	static lastIndexOf() {
+
+	static lastIndexOf () {
 		return Array.prototype.lastIndexOf.apply(this, arguments);
 	}
-	static map() {
+
+	static map () {
 		return Array.prototype.map.apply(this, arguments);
 	}
-	static pop() {
+
+	static pop () {
 		return Array.prototype.pop.apply(this, arguments);
 	}
-	static push() {
+
+	static push () {
 		return Array.prototype.push.apply(this, arguments);
 	}
-	static reduce() {
+
+	static reduce () {
 		return Array.prototype.reduce.apply(this, arguments);
 	}
-	static reverse() {
+
+	static reverse () {
 		return Array.prototype.reverse.apply(this, arguments);
 	}
-	static shift() {
+
+	static shift () {
 		return Array.prototype.shift.apply(this, arguments);
 	}
-	static slice() {
+
+	static slice () {
 		return Array.prototype.slice.apply(this, arguments);
 	}
-	static splice() {
+
+	static splice () {
 		return Array.prototype.splice.apply(this, arguments);
 	}
-	static unshift() {
+
+	static unshift () {
 		return Array.prototype.unshift.apply(this, arguments);
 	}
-	static values() {
+
+	static values () {
 		return Array.prototype.values.apply(this, arguments);
 	}
 }

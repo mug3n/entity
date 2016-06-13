@@ -5,6 +5,21 @@ import {Entity} from './entity/Entity/Entity';
 import {Extended} from './model/extended/Extended/Extended';
 import {ExtendedLevel2} from './model/extended/ExtendedLevel2/ExtendedLevel2';
 
+function extendedFactory () {
+	return new ExtendedLevel2(
+		{
+			id: parseInt(Math.random() * 100000000),
+			a: Math.random() < .5,
+			b: Math.random().toString(36).substring(7),
+			attachment: new Extended(
+				{
+					id: parseInt(Math.random() * 100000000)
+				}
+			)
+		}
+	)
+}
+
 class Application {
 	constructor () {
 		this.entity = new Entity();

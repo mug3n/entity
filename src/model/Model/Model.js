@@ -2,6 +2,7 @@
  * Created by mugen on 6/11/16.
  */
 import {Base} from '../../model/base/Base/Base';
+import {Stream} from '../../entity/Stream/Stream';
 import {Stack} from '../../model/Stack/Stack';
 
 export class Model {
@@ -21,28 +22,26 @@ export class Model {
 	}
 
 	static findOne (id) {
-		var promise;
+		var stream;
 
-		promise = new Promise(
-			function (resolve) {
-				if (this.depot.get(id)) {
-					setTimeout(
-						function () {
-							resolve(this.depot.get(id));
-						}.bind(this)
-					)
-				} else {
-					// here goes api call
-					setTimeout(
-						function () {
-							resolve(this.depot.get(id));
-						}.bind(this)
-					)
-				}
-			}.bind(this)
-		);
+		stream = new Stream();
 
-		return promise;
+		if (this.depot.get(id)) {
+			setTimeout(
+				function () {
+					stream.pour(this.depot.get(id));
+				}.bind(this)
+			)
+		} else {
+			// here goes api call
+			setTimeout(
+				function () {
+					stream.pour(this.depot.get(id));
+				}.bind(this)
+			)
+		}
+
+		return stream;
 	}
 
 	static findAll () {
@@ -80,7 +79,7 @@ export class Model {
 				if (this.constructor.isComposite(key) && !value.composed) {
 					composition.set(
 						key,
-						this.constructor.define[key].findOne(value.id).then(
+						this.constructor.define[key].findOne(value.id).pipe(
 							function (composed) {
 								this[key] = composed;
 								composition.delete(key);
