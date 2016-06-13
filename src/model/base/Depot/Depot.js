@@ -13,7 +13,7 @@ export class Depot {
 	}
 
 	get (id) {
-		return id ? this.contents.get(id) : Array.from(this.contents, function (pair) {
+		return id !== undefined ? this.contents.get(id) : Array.from(this.contents, function (pair) {
 			return pair[1];
 		});
 	}
