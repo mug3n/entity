@@ -4,6 +4,7 @@
 import {Entity} from './entity/Entity/Entity';
 import {Extended} from './model/extended/Extended/Extended';
 import {ExtendedLevel2} from './model/extended/ExtendedLevel2/ExtendedLevel2';
+import {Stream} from './entity/stream/Stream/Stream';
 
 function extendedFactory () {
 	return new ExtendedLevel2(
@@ -57,7 +58,7 @@ class Application {
 				}
 			}
 		);
-		
+
 		console.log('Up!');
 	}
 }
