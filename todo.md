@@ -1,1 +1,1 @@
-- [] Offload model composing to processor/worker
+- [ ] Offload model composing to processor/worker
