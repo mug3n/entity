@@ -9,7 +9,7 @@ Some es6 features are missing for now, as they are not handled by babel yet. Tha
 - npm install
 - build 
     - I have used browserify/watchify. It's pretty much the fastest way to get it running. Install browserify/watchify,
-    then run browserify/watchify -v true #source file# -t babelify --outfile #destination file#
+    then run browserify/watchify -v true src/index.js -t babelify --outfile dist/bundle.js
     https://babeljs.io/docs/setup/#installation
 
 ## Usage
