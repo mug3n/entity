@@ -4,8 +4,7 @@
 import {Stack} from '../../Stack/Stack';
 
 export class Depot {
-	constructor (constructor) {
-		this.Model    = constructor;
+	constructor () {
 		this.contents = new Stack();
 	}
 
