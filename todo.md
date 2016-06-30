@@ -1,1 +1,2 @@
 - [ ] Offload model composing to processor/worker
+- [ ] Rendering engine, with a separate worker for it
