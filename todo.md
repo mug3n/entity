@@ -1,2 +1,5 @@
 - [ ] Offload model composing to processor/worker
 - [ ] Rendering engine, with a separate worker for it
+- [ ] Get rid of recursion in serialization (maybe emit an event to model instances to trigger self-serialization)
+- [ ] Use arrow functions where possible
+- [ ] Remove Pipe class, simplify Stream class and make it ambigous to input/output, in order to allow chaining, agregating the streams per need.
