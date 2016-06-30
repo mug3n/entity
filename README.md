@@ -11,8 +11,8 @@ Some es6 features are missing for now, as they are not handled by babel yet. Tha
     - I have used browserify/watchify. It's pretty much the fastest way to get it running. Install browserify/watchify,
     then run:
     
-        browserify/watchify -v true src/index.js -t babelify --outfile dist/bundle.js (for the front part)
-        browserify/watchify -v true src/entity/model/base/processor/Worker/Worker.js -t babelify --outfile dist/worker.js (for the worker)
+       - browserify/watchify -v true src/index.js -t babelify --outfile dist/bundle.js (for the front part)
+       - browserify/watchify -v true src/entity/model/base/processor/Worker/Worker.js -t babelify --outfile dist/worker.js (for the worker)
         
     https://babeljs.io/docs/setup/#installation
 
