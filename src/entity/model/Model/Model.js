@@ -6,7 +6,8 @@ import {Stream} from '../../stream/Stream/Stream';
 
 export class Model {
 	constructor (data) {
-		this.stream = new Stream();
+		this.stream    = new Stream();
+		this.composing = new Stream();
 
 		Object.defineProperties(
 			this,
@@ -17,7 +18,7 @@ export class Model {
 					previous[current] = {
 						set: function (value) {
 							privateValue = value;
-							this.stream.pour(this);
+							this.stream.carry(this);
 						}.bind(this),
 						get: function () {
 							return privateValue;
@@ -33,7 +34,6 @@ export class Model {
 			this[key] = data[key];
 		}
 
-		this.composed = false;
 		this.compose();
 		this.constructor.depot.set(this);
 	}
@@ -50,14 +50,22 @@ export class Model {
 		if (this.depot.get(id)) {
 			setTimeout(
 				function () {
-					this.depot.get(id).stream.pour(this.depot.get(id));
+					this.depot.get(id).composed(
+						function (composed) {
+							this.depot.get(id).stream.carry(composed);
+						}.bind(this)
+					);
 				}.bind(this)
 			)
 		} else {
 			// here goes api call
 			setTimeout(
 				function () {
-					this.depot.get(id).stream.pour(this.depot.get(id));
+					this.depot.get(id).composed(
+						function (composed) {
+							this.depot.get(id).stream.carry(composed);
+						}.bind(this)
+					);
 				}.bind(this),
 				50
 			)
@@ -67,13 +75,13 @@ export class Model {
 	}
 
 	static findAll () {
-			// here goes api call
-			setTimeout(
-				function () {
-					this.depot.get().stream.pour(this.depot.get());
-				}.bind(this),
-				50
-			);
+		// here goes api call
+		setTimeout(
+			function () {
+				this.depot.get().stream.carry(this.depot.get());
+			}.bind(this),
+			50
+		);
 
 		return this.depot.get().stream;
 	}
@@ -87,28 +95,45 @@ export class Model {
 			function (key) {
 				return this[key] && this[key].isComposed && this[key].isComposed();
 			}.bind(this)
-		)
+		);
+	}
+
+	composed (handler) {
+		if (handler) {
+			if (this.isComposed()) {
+				//console.count('Model already composed.');
+				this.composing.unlink().pipe(handler).carry(this);
+			} else {
+				this.composing.pipe(handler);
+			}
+		} else {
+			console.count('Model composed.');
+
+			this.composing.carry(this);
+			this.composed = function (handler) {
+				//console.count('Model already composed.');
+				if (handler) {
+					this.composing.unlink().pipe(handler).carry(this).unlink();
+				}
+			}.bind(this);
+		}
+
+		return this;
 	}
 
 	compose () {
 		Object.keys(this.constructor.define).forEach(
 			function (key) {
-				var value;
-
-				value = this[key];
-
-				if (this.constructor.isComposite(key) && !value.composed) {
-					this[key] = this.constructor.define[key].findOne(value.id).pipe(
-						function (composed) {
-							this[key] = composed;
-							this.composed = this.isComposed();
-						}.bind(this)
-					)
-				}
+				this.constructor.define[key].findOne(this[key].id).pipe(
+					function (model) {
+						this[key] = model;
+						if (this.isComposed()) {
+							this.composed();
+						}
+					}.bind(this)
+				)
 			}.bind(this)
 		);
-
-		this.composed = this.isComposed();
 	}
 
 	properties () {

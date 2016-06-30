@@ -6,26 +6,23 @@ import {Stream} from '../../stream/Stream/Stream';
 
 export class Stack {
 	constructor (array) {
-		this.length = 0;
-
-		if (arguments.length > 1 || !arguments[0] instanceof Array) {
-			array = arguments;
-		}
-
-		this.length = array && array.length || 0;
+		this.consolidator = new Stream('Consolidated');
+		this.composing = new Stream();
+		this.consolidator.pipe(
+			function () {
+				if (this.isComposed()) {
+					this.composed();
+				}
+			}.bind(this)
+		);
+		this.length    = array && array.length || 0;
 
 		if (array) {
-
-			array = array.reduce(
-				function (lastValue, currentValue) {
-					lastValue[currentValue.id] = currentValue;
-					return lastValue;
-				},
-				{}
+			array.forEach(
+				function (model) {
+					this.set(model);
+				}.bind(this)
 			);
-
-			Object.assign(this, array);
-
 		}
 
 		this.stream = new Stream();
@@ -35,54 +32,84 @@ export class Stack {
 		if (!this[model.id]) {
 			this.length += 1;
 		}
-		this[model.id] = model;
 
+		model.composed(
+			this.consolidator
+		);
+
+		this[model.id] = model;
 	}
 
 	unset (identifier) {
-		var index;
-
 		identifier = typeof identifier === 'object' ? identifier.id : identifier;
-
-		index = this.constructor.findIndex.call(
-			this,
-			function (item) {
-				return item && item.id === identifier;
-			}
-		);
-
-		this[index] = null;
+		delete this[identifier];
 	}
 
 	get (id) {
-		return this.constructor.find.call(
-			this,
-			item => item.id === id
-		)
+		return this[id];
 	}
 
-	compose () {
-		this.constructor.map.call(
-			this,
-			function (item) {
-				return item.compose();
+	isComposed () {
+		this.forEach(
+			function (model) {
+				if (!model.isComposed()) {
+					return false;
+				}
 			}
-		)
+		);
+
+		return true;
 	}
 
-	static findIndex () {
-		return Array.prototype.findIndex.apply(this, arguments)
+	composed (handler) {
+		if (handler) {
+			if (this.isComposed()) {
+				this.composing.unlink().pipe(handler).carry(this);
+			} else {
+				this.composing.pipe(handler);
+			}
+		} else {
+			console.count('Stack composed.');
+			this.composing.route = Stream.Free;
+			this.composing.carry(this);
+		}
+
+		return this;
 	}
 
-	filter () {
-		return Array.prototype.filter.apply(this, arguments);
+	filter (filter) {
+		return Object.keys(this)
+			.filter(
+				function (key) {
+					filter(this[key], key);
+				}.bind(this)
+			)
+			.map(
+				function (key) {
+					return this[key];
+				}.bind(this)
+			);
 	}
 
-	static find () {
-		return Array.prototype.find.apply(this, arguments);
+	forEach (handler) {
+		Object.keys(this).forEach(
+			function (key) {
+				if (!(this[key] instanceof Stream) && typeof this[key] === 'object') {
+					handler(this[key], key);
+				}
+			}.bind(this)
+		);
 	}
 
-	forEach () {
-		return Array.prototype.forEach.apply(this, arguments);
+	toArray () {
+		var array = [];
+
+		this.forEach(
+			function (model) {
+				array.push(model);
+			}
+		);
+
+		return array;
 	}
 }

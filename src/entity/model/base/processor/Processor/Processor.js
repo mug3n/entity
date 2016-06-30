@@ -4,7 +4,7 @@
 
 import {Stream} from '../../../../stream/Stream/Stream';
 
-var worker = new Worker('src/model/base/processor/Worker/Worker.js');
+//var worker = new Worker('src/model/base/processor/Worker/Worker.js');
 
 class Process {
 	constructor (method, args) {
@@ -33,12 +33,14 @@ class processor {
 	}
 
 	processed (data) {
-		this.stream.pour(data);
+		this.stream.carry(data);
 	}
 }
 
 export let Processor = new processor();
 
-worker.addEventListener('message', function (e) {
-	Processor.processed(e);
-}.bind(this), false);
+worker.addEventListener(
+	'message',
+	function (e) {
+		Processor.processed(e);
+	}, false);
