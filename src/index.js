@@ -26,6 +26,10 @@ class Application {
 			}.bind(this)
 		);
 
+		this.worker.addEventListener('message', function (message) {
+			this.Input.carry(JSON.parse(message.data));
+		}.bind(this), false);
+
 		console.log('Up!');
 	}
 }

@@ -101,12 +101,12 @@ export class Stack {
 		);
 	}
 
-	toArray () {
+	toArray (map) {
 		var array = [];
 
 		this.forEach(
 			function (model) {
-				array.push(model);
+				array.push(!map && model || map(model));
 			}
 		);
 

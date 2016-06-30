@@ -44,6 +44,39 @@ function request (url, method) {
 	return stream;
 }
 
+function serialize (data) {
+	let serialized;
+
+	let serializer = function (model) {
+		delete model.composing;
+		delete model.stream;
+
+		return Object.getOwnPropertyNames(model).reduce(
+			function (lastValue, currentValue) {
+				if (model.constructor.isComposite(currentValue)) {
+					lastValue[currentValue] = serializer(model[currentValue]);
+				} else {
+					lastValue[currentValue] = model[currentValue];
+				}
+
+				return lastValue;
+			},
+			{}
+		);
+	};
+
+	if (data instanceof Stack) {
+		serialized = data.toArray(
+			function (model) {
+				return serializer(model);
+			}
+		);
+	} else {
+		serialized = serializer(model);
+	}
+	return serialized;
+}
+
 
 let Input = new Stream();
 
@@ -61,7 +94,7 @@ let Output = new Stream();
 
 Output.pipe(
 	function (message) {
-		self.postMessage(message.toArray());
+		self.postMessage(JSON.stringify(serialize(message)));
 	}
 );
 
@@ -72,7 +105,7 @@ request('../data.json', 'GET').pipe(
 		console.time('Composed 1000 models in');
 
 		data = JSON.parse(data);
-		//data = data.slice(0, 5);
+		data = data.slice(0, 1);
 		//data = data.slice().concat(data);
 		consolidator.pipe(
 			function () {
